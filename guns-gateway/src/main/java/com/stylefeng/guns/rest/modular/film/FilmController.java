@@ -3,6 +3,7 @@ package com.stylefeng.guns.rest.modular.film;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.stylefeng.guns.api.film.FilmServiceAPI;
 import com.stylefeng.guns.api.film.vo.CatVO;
+import com.stylefeng.guns.api.film.vo.FilmVO;
 import com.stylefeng.guns.api.film.vo.SourceVO;
 import com.stylefeng.guns.api.film.vo.YearVO;
 import com.stylefeng.guns.api.user.UserAPI;
@@ -42,9 +43,9 @@ public class FilmController {
         //获取banner信息
         filmIndexVO.setBanners(filmServiceAPI.getBanners());
         //获取热映的电影
-        //filmIndexVO.setHotFilms(filmServiceAPI.getHotFilms(true,8));
+        filmIndexVO.setHotFilms(filmServiceAPI.getHotFilms(true,8,1,99,99,99,99));
         //获取即将上映的电影
-        //filmIndexVO.setSoonFilms(filmServiceAPI.getSoonFilms(true,8));
+        filmIndexVO.setSoonFilms(filmServiceAPI.getSoonFilms(true,8,1,99,99,99,99));
         //票房排行榜
         filmIndexVO.setBoxRanking(filmServiceAPI.getBoxRanking());
         //获取受欢迎
@@ -159,15 +160,36 @@ public class FilmController {
 
     @RequestMapping(value = "getFilms",method = RequestMethod.GET)
     public ResponseVO getFilms(FilmRequestVO filmRequestVO){
+        String img_pre = "http://img.meetingshop.cn";
+        FilmVO filmVO = null;
         //根据showType判断影片查询类型
-
         //根据sortId排序
-
         //根据各种条件查询
-
         //判断当前页是第几页
+        switch (filmRequestVO.getShowType()){
+            case 1:
+                filmVO = filmServiceAPI.getHotFilms(false,filmRequestVO.getPageSize(),filmRequestVO.getNowPage(),
+                                                       filmRequestVO.getSortId(),filmRequestVO.getSourceId(),filmRequestVO.getYearId(),
+                                                       filmRequestVO.getCatId());
+                break;
+            case 2:
+                filmVO = filmServiceAPI.getSoonFilms(false,filmRequestVO.getPageSize(),filmRequestVO.getNowPage(),
+                        filmRequestVO.getSortId(),filmRequestVO.getSourceId(),filmRequestVO.getYearId(),
+                        filmRequestVO.getCatId());
+                break;
+            case 3:
+                filmVO = filmServiceAPI.getClassicFilms(filmRequestVO.getPageSize(),filmRequestVO.getNowPage(),
+                        filmRequestVO.getSortId(),filmRequestVO.getSourceId(),filmRequestVO.getYearId(),
+                        filmRequestVO.getCatId());
+                break;
+            default:
+                filmVO = filmServiceAPI.getHotFilms(false,filmRequestVO.getPageSize(),filmRequestVO.getNowPage(),
+                        filmRequestVO.getSortId(),filmRequestVO.getSourceId(),filmRequestVO.getYearId(),
+                        filmRequestVO.getCatId());
+                break;
+        }
 
 
-        return null;
+        return ResponseVO.success(filmRequestVO.getNowPage(),filmRequestVO.getPageSize(),img_pre,filmVO.getFilmInfo());
     }
 }

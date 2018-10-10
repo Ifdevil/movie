@@ -82,7 +82,24 @@ public class DefaultFilmServiceImpl implements FilmServiceAPI {
             filmVO.setFilmInfo(result);
         }else {
             //如果不是，则是列表页，同样需要限制内容为热映影片
-            Page<MoocFilmT> page = new Page<>(nowPage,nums);
+            Page<MoocFilmT> page = null;
+            //根据sortedId的不同，来组织不同的Page对象
+            //1:按热门搜索  2：按时间搜索  3：按评价搜索
+            switch (sortId){
+                case 1:
+                    page = new Page<>(nowPage,nums,"film_box_office");
+                    break;
+                case 2:
+                    page = new Page<>(nowPage,nums,"film_time");
+                    break;
+                case 3:
+                    page = new Page<>(nowPage,nums,"film_score");
+                    break;
+                default:
+                    page = new Page<>(nowPage,nums,"film_box_office");
+                    break;
+            }
+
             //如果sourceId,yearId,catId不为99，则表示按照对应的编号进行查询
             if(sourceId!=99){
                 wrapper.eq("film_source",sourceId);
@@ -126,7 +143,23 @@ public class DefaultFilmServiceImpl implements FilmServiceAPI {
             filmVO.setFilmInfo(result);
         }else {
             //如果不是，则是列表页，同样需要限制内容为即将上映影片
-            Page<MoocFilmT> page = new Page<>(nowPage,nums);
+            Page<MoocFilmT> page = null;
+            //根据sortedId的不同，来组织不同的Page对象
+            //1:按热门搜索  2：按时间搜索  3：按评价搜索
+            switch (sortId){
+                case 1:
+                    page = new Page<>(nowPage,nums,"film_preSaleNum");
+                    break;
+                case 2:
+                    page = new Page<>(nowPage,nums,"film_time");
+                    break;
+                case 3:
+                    page = new Page<>(nowPage,nums,"film_preSaleNum");
+                    break;
+                default:
+                    page = new Page<>(nowPage,nums,"film_preSaleNum");
+                    break;
+            }
             //如果sourceId,yearId,catId不为99，则表示按照对应的编号进行查询
             if(sourceId!=99){
                 wrapper.eq("film_source",sourceId);
@@ -157,7 +190,23 @@ public class DefaultFilmServiceImpl implements FilmServiceAPI {
         List<FilmInfo> result = new ArrayList<>();
         EntityWrapper<MoocFilmT> wrapper = new EntityWrapper<>();
         wrapper.eq("film_status","3");
-        Page<MoocFilmT> page = new Page<>(nowPage,nums);
+        Page<MoocFilmT> page = null;
+        //根据sortedId的不同，来组织不同的Page对象
+        //1:按热门搜索  2：按时间搜索  3：按评价搜索
+        switch (sortId){
+            case 1:
+                page = new Page<>(nowPage,nums,"film_box_office");
+                break;
+            case 2:
+                page = new Page<>(nowPage,nums,"film_time");
+                break;
+            case 3:
+                page = new Page<>(nowPage,nums,"film_score");
+                break;
+            default:
+                page = new Page<>(nowPage,nums,"film_box_office");
+                break;
+        }
         //如果sourceId,yearId,catId不为99，则表示按照对应的编号进行查询
         if(sourceId!=99){
             wrapper.eq("film_source",sourceId);

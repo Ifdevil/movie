@@ -28,7 +28,7 @@ public class AuthController {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    @Reference
+    @Reference(interfaceClass = UserAPI.class,check = false)
     private UserAPI userAPI;
 
     @Resource(name = "simpleValidator")
