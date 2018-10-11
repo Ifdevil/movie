@@ -2,19 +2,13 @@ package com.stylefeng.guns.rest.modular.film;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.stylefeng.guns.api.film.FilmServiceAPI;
-import com.stylefeng.guns.api.film.vo.CatVO;
-import com.stylefeng.guns.api.film.vo.FilmVO;
-import com.stylefeng.guns.api.film.vo.SourceVO;
-import com.stylefeng.guns.api.film.vo.YearVO;
+import com.stylefeng.guns.api.film.vo.*;
 import com.stylefeng.guns.api.user.UserAPI;
 import com.stylefeng.guns.rest.modular.film.vo.FilmConditionVO;
 import com.stylefeng.guns.rest.modular.film.vo.FilmIndexVO;
 import com.stylefeng.guns.rest.modular.film.vo.FilmRequestVO;
 import com.stylefeng.guns.rest.modular.vo.ResponseVO;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +49,7 @@ public class FilmController {
 
         return ResponseVO.success(IMG_PRE,filmIndexVO);
     }
+
 
     @RequestMapping(value = "getConditionList",method = RequestMethod.GET)
     public ResponseVO getConditionList(@RequestParam(name = "catId",required = false,defaultValue = "99")String catId,
@@ -158,6 +153,7 @@ public class FilmController {
         return ResponseVO.success(filmConditionVO);
     }
 
+
     @RequestMapping(value = "getFilms",method = RequestMethod.GET)
     public ResponseVO getFilms(FilmRequestVO filmRequestVO){
         String img_pre = "http://img.meetingshop.cn";
@@ -191,5 +187,20 @@ public class FilmController {
 
 
         return ResponseVO.success(filmRequestVO.getNowPage(),filmRequestVO.getPageSize(),img_pre,filmVO.getFilmInfo());
+    }
+
+    @RequestMapping(value = "films/{searchParam}",method = RequestMethod.GET)
+    public ResponseVO films(@PathVariable("searchParam")String searchParam,int searchType){
+
+        // 根据searchType，判断查询类型
+        FilmDetailVO filmDetail = filmServiceAPI.getFilmDetail(searchType, searchParam);
+        //获取影片详细信息 ->Dubbo异步获取
+        //获取影片描述信息
+
+        //获取图片信息
+
+        //获取演员信息
+        return null;
+
     }
 }
