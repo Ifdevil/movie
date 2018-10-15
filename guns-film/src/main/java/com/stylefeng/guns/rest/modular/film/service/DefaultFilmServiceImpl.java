@@ -328,7 +328,7 @@ public class DefaultFilmServiceImpl implements FilmServiceAPI {
         FilmDetailVO filmDetailVO = null;
         //searchType 1-按名称  2-按ID查找
         if(searchType==1){
-            filmDetailVO = moocFilmTMapper.getFilmDetailByName(searchParam);
+            filmDetailVO = moocFilmTMapper.getFilmDetailByName("%"+searchParam+"%");
         }else{
             filmDetailVO = moocFilmTMapper.getFilmDetailById(searchParam);
         }
@@ -336,9 +336,9 @@ public class DefaultFilmServiceImpl implements FilmServiceAPI {
     }
 
     private MoocFilmInfoT getFilmInfo(String filmId){
-        MoocFilmInfoT moocFilmInfoT = null;
+        MoocFilmInfoT moocFilmInfoT = new MoocFilmInfoT();
         moocFilmInfoT.setFilmId(filmId);
-        moocFilmInfoTMapper.selectOne(moocFilmInfoT);
+        moocFilmInfoT  = moocFilmInfoTMapper.selectOne(moocFilmInfoT);
         return moocFilmInfoT;
     }
 
@@ -382,7 +382,7 @@ public class DefaultFilmServiceImpl implements FilmServiceAPI {
 
     @Override
     public List<ActorVO> getActors(String filmId) {
-
-        return null;
+        List<ActorVO> actors = moocActorTMappe.getActors(filmId);
+        return actors;
     }
 }
