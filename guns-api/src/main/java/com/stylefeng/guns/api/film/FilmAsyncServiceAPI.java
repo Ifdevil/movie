@@ -5,6 +5,7 @@ import com.stylefeng.guns.api.film.vo.*;
 import java.util.List;
 
 public interface FilmAsyncServiceAPI {
+
     //获取影片相关的其他信息【演员表、图片地址...】
     //获取影片描述信息
     FilmDescVO getFilmDesc(String filmId);
