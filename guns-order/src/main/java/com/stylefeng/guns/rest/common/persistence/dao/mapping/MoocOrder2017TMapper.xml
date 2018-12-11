@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.stylefeng.guns.rest.common.persistence.dao.MoocOrderTMapper">
+<mapper namespace="com.stylefeng.guns.rest.common.persistence.dao.MoocOrder2017TMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.stylefeng.guns.rest.common.persistence.model.MoocOrderT">
+    <resultMap id="BaseResultMap" type="com.stylefeng.guns.rest.common.persistence.model.MoocOrder2017T">
         <result column="UUID" property="uuid"/>
         <result column="cinema_id" property="cinemaId"/>
         <result column="field_id" property="fieldId"/>
@@ -37,7 +37,7 @@
         o.`order_price` AS orderPrice,
         UNIX_TIMESTAMP(o.`order_time`) AS orderTimestamp
         FROM
-        mooc_order_t o,
+        mooc_order_2017_t o,
         mooc_field_t f,
         mooc_hall_film_info_t h,
         mooc_cinema_t c
@@ -58,7 +58,7 @@
         o.`order_price` AS orderPrice,
         UNIX_TIMESTAMP(o.`order_time`) AS orderTimestamp
         FROM
-        mooc_order_t o,
+        mooc_order_2017_t o,
         mooc_field_t f,
         mooc_hall_film_info_t h,
         mooc_cinema_t c
@@ -69,7 +69,7 @@
     </select>
 
     <select id="getSoldSeatsByFieldId" parameterType="java.lang.Integer" resultType="java.lang.String">
-        SELECT GROUP_CONCAT(seats_ids) FROM mooc_order_t where field_id=#{fieldId}
+        SELECT GROUP_CONCAT(seats_ids) FROM mooc_order_2017_t where field_id=#{fieldId}
     </select>
 
 </mapper>

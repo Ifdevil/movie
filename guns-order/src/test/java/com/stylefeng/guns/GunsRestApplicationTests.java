@@ -12,13 +12,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(classes = OrderApplication.class)
 public class GunsRestApplicationTests {
 
-	@Autowired
-	private FTPUtil ftpUtil;
+    @Autowired
+    private FTPUtil ftpUtil;
 
-	@Test
-	public void contextLoads() {
-		String fileStrByAddress = ftpUtil.getFileStrByAddress("cgs.json");
-		System.out.println(fileStrByAddress);
-	}
+    @Test
+    public void contextLoads() {
+        String fileStrByAddress = ftpUtil.getFileStrByAddress("cgs.json");
+        System.out.println(fileStrByAddress);
+    }
 
 }

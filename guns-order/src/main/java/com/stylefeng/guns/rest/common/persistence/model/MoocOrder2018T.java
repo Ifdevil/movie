@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.activerecord.Model;
+import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 
 import java.io.Serializable;
@@ -14,17 +15,17 @@ import java.io.Serializable;
  * </p>
  *
  * @author npz
- * @since 2018-10-25
+ * @since 2018-10-31
  */
-@TableName("mooc_order_t")
-public class MoocOrderT extends Model<MoocOrderT> {
+@TableName("mooc_order_2018_t")
+public class MoocOrder2018T extends Model<MoocOrder2018T> {
 
     private static final long serialVersionUID = 1L;
 
     /**
      * 主键编号
      */
-    @TableField("UUID")
+    @TableId("UUID")
     private String uuid;
     /**
      * 影院编号
@@ -173,7 +174,7 @@ public class MoocOrderT extends Model<MoocOrderT> {
 
     @Override
     public String toString() {
-        return "MoocOrderT{" +
+        return "MoocOrder2018T{" +
                 "uuid=" + uuid +
                 ", cinemaId=" + cinemaId +
                 ", fieldId=" + fieldId +

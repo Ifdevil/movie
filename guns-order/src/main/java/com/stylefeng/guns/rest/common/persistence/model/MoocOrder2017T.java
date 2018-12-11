@@ -14,10 +14,10 @@ import java.io.Serializable;
  * </p>
  *
  * @author npz
- * @since 2018-10-25
+ * @since 2018-10-31
  */
-@TableName("mooc_order_t")
-public class MoocOrderT extends Model<MoocOrderT> {
+@TableName("mooc_order_2017_t")
+public class MoocOrder2017T extends Model<MoocOrder2017T> {
 
     private static final long serialVersionUID = 1L;
 
@@ -173,7 +173,7 @@ public class MoocOrderT extends Model<MoocOrderT> {
 
     @Override
     public String toString() {
-        return "MoocOrderT{" +
+        return "MoocOrder2017T{" +
                 "uuid=" + uuid +
                 ", cinemaId=" + cinemaId +
                 ", fieldId=" + fieldId +

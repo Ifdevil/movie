@@ -42,10 +42,22 @@ spring:
       name: dubbo
       port: 20886
   datasource:
-      url: jdbc:mysql://127.0.0.1:3306/guns_rest?autoReconnect=true&useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
-      username: root
-      password: 123456
-      filters: log4j,wall,mergeStat
+    url: jdbc:mysql://127.0.0.1:3306/guns_rest?autoReconnect=true&useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
+    username: root
+    password: 123456
+    filters: log4j,wall,mergeStat
+
+apache:
+  rocketmq:
+     name-server-address: 127.0.0.1:9876
+     # 可选, 如果无需发送消息则忽略该配置
+     producer-group: orderProducer
+     # 发送超时配置毫秒数, 可选, 默认3000
+     send-msg-timeout: 5000
+     # 追溯消息具体消费情况的开关，默认打开
+     #trace-enabled: false
+     # 是否启用VIP通道，默认打开
+     #vip-channel-enabled: false
 
 logging:
   level.root: info

@@ -27,13 +27,13 @@ import java.util.List;
 
 @Slf4j
 @Component
-@Service(interfaceClass = OrderServiceAPI.class,group = "order2018")
+@Service(interfaceClass = OrderServiceAPI.class, group = "order2018")
 public class OrderServiceImpl2018 implements OrderServiceAPI {
 
     @Autowired
     private MoocOrder2018TMapper moocOrder2018TMapper;
 
-    @Reference(interfaceClass = CinemaServiceAPI.class,check = false)
+    @Reference(interfaceClass = CinemaServiceAPI.class, check = false)
     private CinemaServiceAPI cinemaServiceAPI;
 
     @Autowired
@@ -54,22 +54,23 @@ public class OrderServiceImpl2018 implements OrderServiceAPI {
         String[] seatArrs = seats.split(",");
         String[] idArrs = ids.split(",");
         int isTrue = 0;
-        for (String id:idArrs){
-            for (String seat:seatArrs){
-                if(seat.equalsIgnoreCase(id)){
+        for (String id : idArrs) {
+            for (String seat : seatArrs) {
+                if (seat.equalsIgnoreCase(id)) {
                     isTrue++;
                 }
             }
         }
-        if (seatArrs.length == isTrue){
+        if (seatArrs.length == isTrue) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
     /**
      * 判断是否为已售座位
+     *
      * @param fieldId
      * @param seats
      * @return
@@ -77,14 +78,14 @@ public class OrderServiceImpl2018 implements OrderServiceAPI {
     @Override
     public boolean isNotSoldSeats(String fieldId, String seats) {
         EntityWrapper entityWrapper = new EntityWrapper();
-        entityWrapper.eq("field_id",fieldId);
+        entityWrapper.eq("field_id", fieldId);
         List<MoocOrder2018T> list = moocOrder2018TMapper.selectList(entityWrapper);
         String[] seatArrs = seats.split(",");
-        for (MoocOrder2018T moocOrderT:list){
+        for (MoocOrder2018T moocOrderT : list) {
             String[] ids = moocOrderT.getSeatsIds().split(",");
-            for (String id:ids){
-                for (String seat:seatArrs){
-                    if(id.equalsIgnoreCase(seat)){
+            for (String id : ids) {
+                for (String seat : seatArrs) {
+                    if (id.equalsIgnoreCase(seat)) {
                         return false;
                     }
                 }
@@ -112,7 +113,7 @@ public class OrderServiceImpl2018 implements OrderServiceAPI {
 
         //求订单总金额
         int solds = soldSeats.split(",").length;
-        double totalPrice = getTotalPrice(solds,filmPrice);
+        double totalPrice = getTotalPrice(solds, filmPrice);
 
         MoocOrder2018T moocOrderT = new MoocOrder2018T();
         moocOrderT.setUuid(uuid);
@@ -126,23 +127,23 @@ public class OrderServiceImpl2018 implements OrderServiceAPI {
         moocOrderT.setCinemaId(cinemaId);
 
         Integer insert = moocOrder2018TMapper.insert(moocOrderT);
-        if(insert>0){
+        if (insert > 0) {
             //返回查询结果
             OrderVO orderVO = moocOrder2018TMapper.getOrderInfoById(uuid);
-            if(orderVO==null || orderVO.getOrderId()==null){
-                log.error("订单信息查询失败，订单编号为{}",uuid);
+            if (orderVO == null || orderVO.getOrderId() == null) {
+                log.error("订单信息查询失败，订单编号为{}", uuid);
                 return null;
-            }else{
+            } else {
                 return orderVO;
             }
-        }else{
+        } else {
             //插入出错
             log.error("订单插入失败");
             return null;
         }
     }
 
-    private Double getTotalPrice(int solds,double filmprice){
+    private Double getTotalPrice(int solds, double filmprice) {
         BigDecimal soldDeci = new BigDecimal(solds);
         BigDecimal filmDeci = new BigDecimal(filmprice);
         BigDecimal result = soldDeci.multiply(filmDeci);
@@ -154,21 +155,21 @@ public class OrderServiceImpl2018 implements OrderServiceAPI {
     }
 
     @Override
-    public Page<OrderVO> getOrderByUserId(Integer userId,Page<OrderVO> page) {
+    public Page<OrderVO> getOrderByUserId(Integer userId, Page<OrderVO> page) {
         Page<OrderVO> result = new Page<>();
-        if(userId==null){
+        if (userId == null) {
             log.error("订单查询业务失败，用户编号未传入");
             return null;
-        }else {
-            List<OrderVO> ordersByUserId = moocOrder2018TMapper.getOrdersByUserId(userId,page);
-            if(ordersByUserId==null || ordersByUserId.size()==0){
+        } else {
+            List<OrderVO> ordersByUserId = moocOrder2018TMapper.getOrdersByUserId(userId, page);
+            if (ordersByUserId == null || ordersByUserId.size() == 0) {
                 result.setTotal(0);
                 result.setRecords(new ArrayList<>());
                 return result;
-            }else{
+            } else {
                 //获取订单总数
                 EntityWrapper<MoocOrder2018T> wrapper = new EntityWrapper<MoocOrder2018T>();
-                wrapper.eq("order_user",userId);
+                wrapper.eq("order_user", userId);
                 Integer counts = moocOrder2018TMapper.selectCount(wrapper);
                 //将结果放入page
                 result.setTotal(counts);
@@ -183,10 +184,10 @@ public class OrderServiceImpl2018 implements OrderServiceAPI {
     @Override
     public String getSoldSeatsByFieldId(Integer fieldId) {
 
-        if(fieldId==null){
+        if (fieldId == null) {
             log.error("查询已售座位错误，未传入任何场次编号");
             return "";
-        }else {
+        } else {
             String soldSeatsByFieldId = moocOrder2018TMapper.getSoldSeatsByFieldId(fieldId);
             return soldSeatsByFieldId;
         }
@@ -204,9 +205,9 @@ public class OrderServiceImpl2018 implements OrderServiceAPI {
         moocOrderT.setUuid(orderId);
         moocOrderT.setOrderStatus(1);
         Integer integer = moocOrder2018TMapper.updateById(moocOrderT);
-        if(integer>=1){
+        if (integer >= 1) {
             return true;
-        }else {
+        } else {
             return false;
         }
     }
@@ -217,9 +218,9 @@ public class OrderServiceImpl2018 implements OrderServiceAPI {
         moocOrderT.setUuid(orderId);
         moocOrderT.setOrderStatus(2);
         Integer integer = moocOrder2018TMapper.updateById(moocOrderT);
-        if(integer>=1){
+        if (integer >= 1) {
             return true;
-        }else {
+        } else {
             return false;
         }
     }
