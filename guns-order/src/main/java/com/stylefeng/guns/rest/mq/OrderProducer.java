@@ -43,4 +43,13 @@ public class OrderProducer {
         return true;
     }
 
+    /**
+     * 接受消息
+     * @return
+     */
+    public static boolean getMessage(){
+
+        return true;
+    }
+
 }
