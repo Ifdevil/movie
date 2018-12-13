@@ -6,6 +6,7 @@ import com.stylefeng.guns.api.film.vo.FilmVO;
 import lombok.Data;
 
 import java.util.List;
+
 @Data
 public class FilmIndexVO {
 

@@ -73,6 +73,10 @@
             <artifactId>spring-cloud-starter-netflix-hystrix-dashboard</artifactId>
             <version>2.0.0.RELEASE</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.rocketmq</groupId>
+            <artifactId>rocketmq-client</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

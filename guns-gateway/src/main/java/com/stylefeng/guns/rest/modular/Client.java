@@ -11,7 +11,7 @@ public class Client {
     @Reference
     private UserAPI userAPI;
 
-    public void login(){
-        userAPI.login("admin","password");
+    public void login() {
+        userAPI.login("admin", "password");
     }
 }

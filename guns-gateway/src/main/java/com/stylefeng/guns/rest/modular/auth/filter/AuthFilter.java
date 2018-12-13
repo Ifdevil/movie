@@ -43,9 +43,9 @@ public class AuthFilter extends OncePerRequestFilter {
         }
         //配置忽略列表
         String ignoreUrl = jwtProperties.getIgnoreUrl();
-        String [] ignoreUrls = ignoreUrl.split(",");
-        for (int i = 0;i<ignoreUrls.length;i++){
-            if(request.getServletPath().startsWith(ignoreUrls[i])){
+        String[] ignoreUrls = ignoreUrl.split(",");
+        for (int i = 0; i < ignoreUrls.length; i++) {
+            if (request.getServletPath().startsWith(ignoreUrls[i])) {
                 chain.doFilter(request, response);
                 return;
             }
@@ -57,9 +57,9 @@ public class AuthFilter extends OncePerRequestFilter {
 
             //通过token获取userid,并且将之存入ThreadLocal,以便以后业务调用
             String userid = jwtTokenUtil.getUsernameFromToken(authToken);
-            if (userid==null){
+            if (userid == null) {
                 return;
-            }else{
+            } else {
                 CurrentUser.saveUserId(userid);
             }
 

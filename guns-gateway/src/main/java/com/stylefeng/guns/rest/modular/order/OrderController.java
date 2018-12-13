@@ -32,131 +32,133 @@ public class OrderController {
 
     private static String IMG_PRE = "http://img.meetingshop.cn/";
 
-    @Reference(interfaceClass = OrderServiceAPI.class,check = false,group = "order2018")
+    @Reference(interfaceClass = OrderServiceAPI.class, check = false, group = "order2018")
     private OrderServiceAPI orderServiceAPI;
 
-    @Reference(interfaceClass = OrderServiceAPI.class,check = false,group = "order2017")
+    @Reference(interfaceClass = OrderServiceAPI.class, check = false, group = "order2017")
     private OrderServiceAPI orderServiceAPI2017;
 
-    @Reference(interfaceClass = AliPayServiceAPI.class,check = false)
+    @Reference(interfaceClass = AliPayServiceAPI.class, check = false)
     private AliPayServiceAPI aliPayServiceAPI;
 
-    public ResponseVO error(Integer fieldId,String soldSeats,String seatsName){
+    public ResponseVO error(Integer fieldId, String soldSeats, String seatsName) {
         return ResponseVO.serviceFail("抱歉，下单的人太多了，请稍后再试！");
     }
+
     /**
      * 购票
+     *
      * @param fieldId
      * @param soldSeats
      * @param seatsName
      * @return
      */
     @HystrixCommand(fallbackMethod = "error", commandProperties = {
-            @HystrixProperty(name="execution.isolation.strategy", value = "THREAD"),
-            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value= "4000"),
+            @HystrixProperty(name = "execution.isolation.strategy", value = "THREAD"),
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "4000"),
             @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "10"),
             @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "50")
-                    }, threadPoolProperties = {
-                    @HystrixProperty(name = "coreSize", value = "1"),
-                    @HystrixProperty(name = "maxQueueSize", value = "10"),
-                    @HystrixProperty(name = "keepAliveTimeMinutes", value = "1000"),
-                    @HystrixProperty(name = "queueSizeRejectionThreshold", value = "8"),
-                    @HystrixProperty(name = "metrics.rollingStats.numBuckets", value = "12"),
-                    @HystrixProperty(name = "metrics.rollingStats.timeInMilliseconds", value = "1500")
-            })
-    @RequestMapping(value = "buyTickets",method = RequestMethod.POST)
-    public ResponseVO buyTickets(Integer fieldId,String soldSeats,String seatsName){
+    }, threadPoolProperties = {
+            @HystrixProperty(name = "coreSize", value = "1"),
+            @HystrixProperty(name = "maxQueueSize", value = "10"),
+            @HystrixProperty(name = "keepAliveTimeMinutes", value = "1000"),
+            @HystrixProperty(name = "queueSizeRejectionThreshold", value = "8"),
+            @HystrixProperty(name = "metrics.rollingStats.numBuckets", value = "12"),
+            @HystrixProperty(name = "metrics.rollingStats.timeInMilliseconds", value = "1500")
+    })
+    @RequestMapping(value = "buyTickets", method = RequestMethod.POST)
+    public ResponseVO buyTickets(Integer fieldId, String soldSeats, String seatsName) {
         try {
 
-            if(tokenBucket.getToken()){
+            if (tokenBucket.getToken()) {
                 //验证售出的票是否为真
-                boolean isTrue = orderServiceAPI.isTrueSeats(fieldId+"",soldSeats);
+                boolean isTrue = orderServiceAPI.isTrueSeats(fieldId + "", soldSeats);
 
                 //已经销售的座位里，有没有这些座位
-                boolean isNotSold = orderServiceAPI.isNotSoldSeats(fieldId+"",soldSeats);
+                boolean isNotSold = orderServiceAPI.isNotSoldSeats(fieldId + "", soldSeats);
 
                 // 验证，上述两个内容有一个不为真，则不创建订单信息
-                if(isTrue && isNotSold){
+                if (isTrue && isNotSold) {
 
                     //创建订单信息，注意获取登录人
                     String userId = CurrentUser.getCurrentUser();
-                    if(userId == null && userId.trim().length()==0) {
+                    if (userId == null && userId.trim().length() == 0) {
                         return ResponseVO.serviceFail("用户未登录");
                     }
-                    OrderVO orderVO = orderServiceAPI.saveOrderInfo(fieldId,soldSeats,seatsName,Integer.parseInt(userId));
-                    if(orderVO==null){
+                    OrderVO orderVO = orderServiceAPI.saveOrderInfo(fieldId, soldSeats, seatsName, Integer.parseInt(userId));
+                    if (orderVO == null) {
                         log.error("购票未成功");
                         return ResponseVO.serviceFail("购票业务异常");
-                    }else{
+                    } else {
                         return ResponseVO.success(orderVO);
                     }
-                }else{
+                } else {
                     return ResponseVO.serviceFail("订单中的座位编号有问题");
                 }
-            }else{
+            } else {
                 return ResponseVO.serviceFail("够票人数过多，请稍后再试");
             }
 
-        }catch (Exception e){
-            log.error("购票业务异常",e);
+        } catch (Exception e) {
+            log.error("购票业务异常", e);
             return ResponseVO.serviceFail("购票业务异常");
         }
     }
 
 
-    @RequestMapping(value = "getOrderInfo",method = RequestMethod.POST)
+    @RequestMapping(value = "getOrderInfo", method = RequestMethod.POST)
     public ResponseVO getOrderInfo(
-            @RequestParam(name = "nowPage",required = false,defaultValue = "1")Integer nowPage,
-            @RequestParam(name = "pageSize",required = false,defaultValue = "5")Integer pageSize
-            ){
+            @RequestParam(name = "nowPage", required = false, defaultValue = "1") Integer nowPage,
+            @RequestParam(name = "pageSize", required = false, defaultValue = "5") Integer pageSize
+    ) {
 
         //获取当前登录人的信息
         String userId = CurrentUser.getCurrentUser();
         //根据个人信息获取订单信息
-        Page<OrderVO> page = new Page<>(nowPage,pageSize);
-        if(userId != null && userId.trim().length()>0) {
+        Page<OrderVO> page = new Page<>(nowPage, pageSize);
+        if (userId != null && userId.trim().length() > 0) {
             Page<OrderVO> result = orderServiceAPI.getOrderByUserId(Integer.parseInt(userId), page);
             Page<OrderVO> result2017 = orderServiceAPI2017.getOrderByUserId(Integer.parseInt(userId), page);
             //合并结果
-            int totalPages = (int)(result.getPages()+result2017.getPages());
+            int totalPages = (int) (result.getPages() + result2017.getPages());
             //合并2018和2017订单总数
             List<OrderVO> orderVOList = new ArrayList<>();
             orderVOList.addAll(result.getRecords());
             orderVOList.addAll(result2017.getRecords());
-            return ResponseVO.success(nowPage,totalPages,"",orderVOList);
+            return ResponseVO.success(nowPage, totalPages, "", orderVOList);
 
-        }else {
+        } else {
             return ResponseVO.serviceFail("用户未登录");
         }
     }
 
-    @RequestMapping(value = "getPayInfo",method = RequestMethod.POST)
-    public ResponseVO getPayInfo(@RequestParam("orderId") String orderId){
+    @RequestMapping(value = "getPayInfo", method = RequestMethod.POST)
+    public ResponseVO getPayInfo(@RequestParam("orderId") String orderId) {
         //获取当前登录人的信息
         String userId = CurrentUser.getCurrentUser();
-        if(userId == null || userId.trim().length()==0){
+        if (userId == null || userId.trim().length() == 0) {
             return ResponseVO.serviceFail("抱歉，用户未登录");
         }
         //订单二维码的返回结果
         AliPayInfoVO aliPayInfoVO = aliPayServiceAPI.getQRCode(orderId);
-        return ResponseVO.success(IMG_PRE,aliPayInfoVO);
+        return ResponseVO.success(IMG_PRE, aliPayInfoVO);
     }
 
-    @RequestMapping(value = "getPayResult",method = RequestMethod.POST)
+    @RequestMapping(value = "getPayResult", method = RequestMethod.POST)
     public ResponseVO getPayResult(@RequestParam("orderId") String orderId,
-                                   @RequestParam( name = "tryNums",required = false,defaultValue = "1") Integer tryNums){
+                                   @RequestParam(name = "tryNums", required = false, defaultValue = "1") Integer tryNums) {
         //获取当前登录人的信息
         String userId = CurrentUser.getCurrentUser();
-        if(userId == null || userId.trim().length()==0){
+        if (userId == null || userId.trim().length() == 0) {
             return ResponseVO.serviceFail("抱歉，用户未登录");
         }
         //把当前用户Id传输给后端
-        RpcContext.getContext().setAttachment("userId",userId);
-        if(tryNums>=4){
+        RpcContext.getContext().setAttachment("userId", userId);
+        if (tryNums >= 4) {
             return ResponseVO.serviceFail("订单支付失败，请稍后重试！");
-        }else {
+        } else {
             AliPayResultVO aliPayResultVO = aliPayServiceAPI.getOrderStatus(orderId);
-            if(aliPayResultVO == null || ToolUtil.isEmpty(aliPayResultVO)){
+            if (aliPayResultVO == null || ToolUtil.isEmpty(aliPayResultVO)) {
                 AliPayResultVO serviceFailVO = new AliPayResultVO();
                 serviceFailVO.setOrderId(orderId);
                 serviceFailVO.setOrderStatus(0);

@@ -28,7 +28,7 @@ public class AuthController {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    @Reference(interfaceClass = UserAPI.class,check = false)
+    @Reference(interfaceClass = UserAPI.class, check = false)
     private UserAPI userAPI;
 
     @Resource(name = "simpleValidator")
@@ -42,15 +42,15 @@ public class AuthController {
         boolean validate = true;
         //使用我们自己的验证机制
         //int userId  = 3;
-        int userId  = userAPI.login(authRequest.getUserName(),authRequest.getPassword());
+        int userId = userAPI.login(authRequest.getUserName(), authRequest.getPassword());
 
-        if(userId==0){
+        if (userId == 0) {
             validate = false;
         }
         if (validate) {
             //randomKey和token已经生成完毕
             final String randomKey = jwtTokenUtil.getRandomKey();
-            final String token = jwtTokenUtil.generateToken(userId+"", randomKey);
+            final String token = jwtTokenUtil.generateToken(userId + "", randomKey);
             //final String token = jwtTokenUtil.generateToken(authRequest.getUserName(), randomKey);
             //返回值
             return ResponseVO.success(new AuthResponse(token, randomKey));

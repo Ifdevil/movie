@@ -5,7 +5,7 @@ import com.stylefeng.guns.rest.common.persistence.model.User;
 
 /**
  * <p>
-  *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author stylefeng
