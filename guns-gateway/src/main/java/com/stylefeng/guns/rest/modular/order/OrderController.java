@@ -14,7 +14,9 @@ import com.stylefeng.guns.core.util.TokenBucket;
 import com.stylefeng.guns.core.util.ToolUtil;
 import com.stylefeng.guns.rest.common.CurrentUser;
 import com.stylefeng.guns.rest.modular.vo.ResponseVO;
+import com.stylefeng.guns.rest.mq.GatewayProducer;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -41,6 +43,22 @@ public class OrderController {
     @Reference(interfaceClass = AliPayServiceAPI.class, check = false)
     private AliPayServiceAPI aliPayServiceAPI;
 
+    @Autowired
+    private GatewayProducer gatewayProducer;
+
+    @RequestMapping(value = "testmq")
+    public ResponseVO testmq(){
+        gatewayProducer.sendMessage();
+        return ResponseVO.success("success");
+    }
+
+    /**
+     * Hystrix自定义方法
+     * @param fieldId
+     * @param soldSeats
+     * @param seatsName
+     * @return
+     */
     public ResponseVO error(Integer fieldId, String soldSeats, String seatsName) {
         return ResponseVO.serviceFail("抱歉，下单的人太多了，请稍后再试！");
     }

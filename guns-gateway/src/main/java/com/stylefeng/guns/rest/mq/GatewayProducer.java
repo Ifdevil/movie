@@ -3,8 +3,12 @@ package com.stylefeng.guns.rest.mq;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
+import org.apache.rocketmq.client.producer.SendResult;
+import org.apache.rocketmq.common.message.Message;
+import org.apache.rocketmq.remoting.exception.RemotingException;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,10 +23,11 @@ public class GatewayProducer {
 
     private String nameserveraddress;
     private String producergroup;
+    private DefaultMQProducer gatewayProducer;
 
     @Bean
     public DefaultMQProducer getOrderProduce(){
-        DefaultMQProducer gatewayProducer = new DefaultMQProducer();
+        gatewayProducer = new DefaultMQProducer();
         gatewayProducer.setNamesrvAddr(nameserveraddress);
         gatewayProducer.setProducerGroup(producergroup);
         try {
@@ -38,7 +43,22 @@ public class GatewayProducer {
      * 发送消息
      * @return
      */
-    public static boolean sendMessage(){
+    public boolean sendMessage(){
+        Message msg = new Message("orderMessage", "push", "1", "Just for push1.".getBytes());
+        try {
+            SendResult result = gatewayProducer.send(msg);
+            System.out.println("id:" + result.getMsgId() + " result:" + result.getSendStatus());
+
+        } catch (MQClientException e) {
+            e.printStackTrace();
+        } catch (RemotingException e) {
+            e.printStackTrace();
+        } catch (MQBrokerException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
 
         return true;
     }
